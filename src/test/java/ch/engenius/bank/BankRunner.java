@@ -14,9 +14,9 @@ class BankRunner {
     private final Random random = new Random(43);
     private final Bank bank = new Bank();
 
-    void registerAccounts(int number, int defaultMoney) {
+    void registerAccounts(int number, int defaultBalance) {
         for (int i = 0; i < number; i++) {
-            bank.registerAccount(i, defaultMoney);
+            bank.registerAccount(i, defaultBalance);
         }
     }
 
