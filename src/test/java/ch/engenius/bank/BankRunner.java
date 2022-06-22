@@ -23,7 +23,7 @@ class BankRunner {
     int getBalance(int accountMaxNumber) {
         return IntStream.range(0, accountMaxNumber)
                 .mapToObj(bank::getAccount)
-                .map(Account::getMoneyAsBigDecimal)
+                .map(Account::getBalanceAsBigDecimal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .intValue();
     }

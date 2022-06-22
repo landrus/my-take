@@ -6,11 +6,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Account {
 
-    private double money;
+    private double balance;
     private final Lock lock = new ReentrantLock();
 
-    public Account(double initialAmount) {
-        money = initialAmount;
+    public Account(double initialBalance) {
+        balance = initialBalance;
     }
 
     public Lock getLock() {
@@ -18,27 +18,27 @@ public class Account {
     }
 
     public boolean hasEnoughCredit(double amount) {
-        return money >= amount;
+        return balance >= amount;
     }
 
     public void withdraw(double amount) {
-        if (!hasEnoughCredit(amount)) {
+        if (hasEnoughCredit(amount)) {
+            changeBalance(balance - amount);
+        } else {
             throw new IllegalStateException("not enough credits on account");
         }
-
-        changeMoney(money - amount);
     }
 
     public void deposit(double amount) {
-        changeMoney(money + amount);
+        changeBalance(balance + amount);
     }
 
-    private void changeMoney(double newAmount) {
-        money = newAmount;
+    private void changeBalance(double newAmount) {
+        balance = newAmount;
     }
 
-    public BigDecimal getMoneyAsBigDecimal() {
-        return BigDecimal.valueOf(money);
+    public BigDecimal getBalanceAsBigDecimal() {
+        return BigDecimal.valueOf(balance);
     }
 
 }
