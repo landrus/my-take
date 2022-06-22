@@ -44,8 +44,9 @@ public class BankRunner {
         int accountOutNumber = random.nextInt(maxAccount);
         Account accIn = bank.getAccount(accountInNumber);
         Account accOut = bank.getAccount(accountOutNumber);
-        accIn.deposit(transfer);
-        accOut.withdraw(transfer);
+
+        Transaction transaction = new Transaction(accOut, accIn, transfer);
+        transaction.execute();
     }
 
     private void registerAccounts(int number, int defaultMoney) {

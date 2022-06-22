@@ -1,29 +1,40 @@
 package ch.engenius.bank;
 
 import java.math.BigDecimal;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Account {
 
     private double money;
+    private final Lock lock = new ReentrantLock();
+
+    public Account(double initialAmount) {
+        money = initialAmount;
+    }
+
+    public Lock getLock() {
+        return lock;
+    }
+
+    public boolean hasEnoughCredit(double amount) {
+        return money >= amount;
+    }
 
     public void withdraw(double amount) {
-        if ((money - amount) < 0) {
+        if (!hasEnoughCredit(amount)) {
             throw new IllegalStateException("not enough credits on account");
         }
 
-        setMoney(money - amount);
+        changeMoney(money - amount);
     }
 
     public void deposit(double amount) {
-        setMoney(money + amount);
+        changeMoney(money + amount);
     }
 
-    public double getMoney() {
-        return money;
-    }
-
-    public void setMoney(double money) {
-        this.money = money;
+    private void changeMoney(double newAmount) {
+        money = newAmount;
     }
 
     public BigDecimal getMoneyAsBigDecimal() {

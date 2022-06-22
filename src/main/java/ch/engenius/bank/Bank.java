@@ -7,8 +7,7 @@ public class Bank {
     private final HashMap<Integer, Account> accounts = new HashMap<>();
 
     public Account registerAccount(int accountNumber, int amount) {
-        Account account = new Account();
-        account.setMoney(amount);
+        Account account = new Account(amount);
         accounts.put(accountNumber, account);
 
         return account;
