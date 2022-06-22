@@ -7,25 +7,28 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-public class BankRunner {
+class BankRunner {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(8);
 
     private final Random random = new Random(43);
     private final Bank bank = new Bank();
 
-    public static void main(String[] args) {
-        BankRunner runner = new BankRunner();
-        int accounts = 100;
-        int defaultDeposit = 1000;
-        int iterations = 10000;
-        runner.registerAccounts(accounts, defaultDeposit);
-        runner.sanityCheck(accounts, accounts * defaultDeposit);
-        runner.runBank(iterations, accounts);
-        runner.sanityCheck(accounts, accounts * defaultDeposit);
+    void registerAccounts(int number, int defaultMoney) {
+        for (int i = 0; i < number; i++) {
+            bank.registerAccount(i, defaultMoney);
+        }
     }
 
-    private void runBank(int iterations, int maxAccount) {
+    int getBalance(int accountMaxNumber) {
+        return IntStream.range(0, accountMaxNumber)
+                .mapToObj(bank::getAccount)
+                .map(Account::getMoneyAsBigDecimal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .intValue();
+    }
+
+    void runBank(int iterations, int maxAccount) {
         for (int i = 0; i < iterations; i++) {
             executor.submit(() -> runRandomOperation(maxAccount));
         }
@@ -47,25 +50,6 @@ public class BankRunner {
 
         Transaction transaction = new Transaction(accOut, accIn, transfer);
         transaction.execute();
-    }
-
-    private void registerAccounts(int number, int defaultMoney) {
-        for (int i = 0; i < number; i++) {
-            bank.registerAccount(i, defaultMoney);
-        }
-    }
-
-    private void sanityCheck(int accountMaxNumber, int totalExpectedMoney) {
-        BigDecimal sum = IntStream.range(0, accountMaxNumber)
-                .mapToObj(bank::getAccount)
-                .map(Account::getMoneyAsBigDecimal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (sum.intValue() != totalExpectedMoney) {
-            throw new IllegalStateException("we got " + sum + " != " + totalExpectedMoney + " (expected)");
-        }
-
-        System.out.println("sanity check OK");
     }
 
 }
